@@ -24,7 +24,7 @@ function asyncify(gen, self = undefined) {
   'use strict'
   const not_promise = 'Returned `value` isn’t a `Promise`'
 
-  return function(...args) {
+  return (...args) => {
     return new Promise((resolve, reject) => {       // inputs callback functions to resolve and reject the returned `Promise`
       // Recursively iterate each `yield`ed `Promise`, resolving on the final return value of the generator function `gen`
       function iterate(itr, /*previously resolved value*/previous = undefined) {
