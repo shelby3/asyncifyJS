@@ -22,6 +22,8 @@ Wanted a solution built on correct primitives of promises & generators (e.g. not
 */
 function asyncify(gen, self = undefined) {
   'use strict'
+  const not_promise = 'Returned `value` isn’t a `Promise`'
+
   return function(...args) {
     return new Promise((resolve, reject) => {       // inputs callback functions to resolve and reject the returned `Promise`
       // Recursively iterate each `yield`ed `Promise`, resolving on the final return value of the generator function `gen`
@@ -30,12 +32,11 @@ function asyncify(gen, self = undefined) {
         if (done)
           resolve(value)                            // `value` is the return value of `gen` or `undefined` if none
         else {
-          const msg = 'Returned `value` isn’t a `Promise`'
-          if (console.assert(value instanceof Promise, msg))
-            reject(new TypeError(msg))
-          else
+          if (console.assert(value instanceof Promise, not_promise))
             value.then (_ => iterate(itr, _))       // so recurse ourself when the `Promise` resolves
                  .catch(_ => reject(_))             // abort the iteration
+          else
+            reject(new TypeError(not_promise))
         }
       }
 
